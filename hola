@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-12-20T19:37:51.777506200Z</date>
+  <millis>1640029071777</millis>
+  <nanos>506200</nanos>
+  <sequence>10</sequence>
+  <logger></logger>
+  <level>INFO</level>
+  <class>dam.jlr.mueblesfxf.util.CSV</class>
+  <method>toCSVfile</method>
+  <thread>18</thread>
+  <message>perrooooooo,pollas,100.0,
+Mueble,Silla,200.0,
+Mueble,Mesa,300.0,
+Mueble,Silla,400.0,
+null,Silla,0.0,
+</message>
+</record>
+</log>
