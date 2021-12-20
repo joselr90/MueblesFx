@@ -71,9 +71,9 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
         this.stage = stage;
 Model model = new Model();
-model.setMaterial("pollas");
+model.setMaterial("Madera");
 model.setPrecio(100);
-model.setTipo("perrooooooo");
+model.setTipo("Mueble");
 Model model2 = new Model();
 model2.setMaterial("Silla");
 model2.setPrecio(200);
