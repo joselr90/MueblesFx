@@ -87,8 +87,8 @@ public class HelloApplication extends Application {
 //add all the models to array
         Model[] models = {model, model2, model3, model4, model5};
 
-        CSV.toCSV(models);
-        File file = CSV.toCSVfile("hola", CSV.toCSV(models));
+//        CSV.toCSV(models);
+//        File file = CSV.toCSVfile("hola", CSV.toCSV(models));
 
         FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("login.fxml"));
 
