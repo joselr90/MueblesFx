@@ -1,5 +1,6 @@
 package dam.jlr.mueblesfxf;
 
+import dam.jlr.mueblesfxf.controller.ControllerHandler;
 import dam.jlr.mueblesfxf.controller.HelloController;
 import dam.jlr.mueblesfxf.controller.LoginController;
 import dam.jlr.mueblesfxf.model.Model;
@@ -49,7 +50,6 @@ public class HelloApplication extends Application {
     }
 
 
-
     public EntityManager getEntityManager() {
         return entityManager;
     }
@@ -61,37 +61,42 @@ public class HelloApplication extends Application {
     private Session session;
 
     EntityManager entityManager;
+
     @Override
     public void start(Stage stage) throws IOException {
+        ControllerHandler.setHelloApplication(this);
         this.stage = stage;
-Model model = new Model();
-model.setMaterial("Madera");
-model.setPrecio(100);
-model.setTipo("Mueble");
-Model model2 = new Model();
-model2.setMaterial("Silla");
-model2.setPrecio(200);
-model2.setTipo("Mueble");
-Model model3 = new Model();
-model3.setMaterial("Mesa");
-model3.setPrecio(300);
-model3.setTipo("Mueble");
-Model model4 = new Model();
-model4.setMaterial("Silla");
-model4.setPrecio(400);
-model4.setTipo("Mueble");
-Model model5 = new Model();
-model5.setMaterial("Silla");
+        Model model = new Model();
+        model.setMaterial("Madera");
+        model.setPrecio(100);
+        model.setTipo("Mueble");
+        Model model2 = new Model();
+        model2.setMaterial("Silla");
+        model2.setPrecio(200);
+        model2.setTipo("Mueble");
+        Model model3 = new Model();
+        model3.setMaterial("Mesa");
+        model3.setPrecio(300);
+        model3.setTipo("Mueble");
+        Model model4 = new Model();
+        model4.setMaterial("Silla");
+        model4.setPrecio(400);
+        model4.setTipo("Mueble");
+        Model model5 = new Model();
+        model5.setMaterial("Silla");
 //add all the models to array
-Model[] models = {model,model2,model3,model4,model5};
+        Model[] models = {model, model2, model3, model4, model5};
+
         CSV.toCSV(models);
-        File file=CSV.toCSVfile("hola",CSV.toCSV(models));
+        File file = CSV.toCSVfile("hola", CSV.toCSV(models));
 
         FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("login.fxml"));
 
 
+
         this.scene = new Scene(loader.load());
-       LoginController loginController =(LoginController)loader.getController();
+        System.out.println(loader.getController().getClass().getSimpleName());
+        LoginController loginController = (LoginController) loader.getController();
         loginController.setHelloApplication(this);
 
         this.stage.setTitle("Login");
@@ -99,7 +104,6 @@ Model[] models = {model,model2,model3,model4,model5};
 
 
         System.out.println("stage setted");
-
 
 
         this.stage.show();
@@ -114,11 +118,13 @@ Model[] models = {model,model2,model3,model4,model5};
 //       }
         launch();
     }
-    private static class Imagex extends Image{
-//fromPlatformImage()
-        public static Image fromPlatformImage(String url){
+
+    private static class Imagex extends Image {
+        //fromPlatformImage()
+        public static Image fromPlatformImage(String url) {
             return new Image(url);
         }
+
         public Imagex(String s) {
             super(s);
         }
@@ -173,7 +179,8 @@ Model[] models = {model,model2,model3,model4,model5};
             super.finalize();
         }
     }
-    private void setScene(Scene scene){
+
+    private void setScene(Scene scene) {
 
     }
     //change scene

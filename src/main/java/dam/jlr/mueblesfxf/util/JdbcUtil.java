@@ -11,6 +11,7 @@ public class JdbcUtil {
     static String username = "";
     static String password = "";
 
+
     public static void getConnection() {
         Properties connectionProps = new Properties();
         connectionProps.put("user", username);
@@ -37,7 +38,7 @@ public class JdbcUtil {
         }
     }
 
-    public static void getConnection(String username, String password) {
+    public static Connection getConnection(String username, String password) {
         Properties connectionProps = new Properties();
         connectionProps.put("user", username);
         connectionProps.put("password", password);
@@ -47,7 +48,7 @@ public class JdbcUtil {
         connectionProps.put("createDatabaseIfNotExist", "true");
 
         try {
-            Class.forName("com.mysql.jdbc.Driver").getDeclaredConstructor().newInstance();
+//            Class.forName("com.mysql.jdbc.Driver").getDeclaredConstructor().newInstance();
             conn = DriverManager.getConnection(
                     "jdbc:" + "mysql" + "://" +
                             "localhost" +
@@ -67,6 +68,7 @@ public class JdbcUtil {
             // handle any errors
             ex.printStackTrace();
         }
+        return conn;
     }
 
     public static void closeConnection() {
@@ -123,10 +125,11 @@ public class JdbcUtil {
 
 
     public static boolean connecttoDB(String dbName) {
-
+String st="com.mysql.cj.jdbc.Driver";
+String st2="com.mysql.jdbc.Driver";
         conn = null;
         try {
-            Class.forName("com.mysql.jdbc.Driver").getDeclaredConstructor().newInstance();
+//            Class.forName(st).getDeclaredConstructor().newInstance();
             conn = DriverManager.getConnection(
                     "jdbc:" + "mysql" + "://" +
                             "localhost" +
@@ -167,7 +170,7 @@ public class JdbcUtil {
     }
 
     public static ArrayList<String> executeMySQLQuery() {
-//        conn=getConnection(username,password);
+//       conn=getConnection(username,password);
         Statement stmt = null;
         ResultSet resultset = null;
         ArrayList<String> dbNames = new ArrayList<>();

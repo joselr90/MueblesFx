@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class DbController implements Initializable {
+public class DbController extends Controller implements Initializable {
 
     @FXML
     private FontIcon ikonli;
@@ -155,6 +155,7 @@ public class DbController implements Initializable {
                 try {
                     Scene scene = new Scene(loader.load());
                     HelloController helloController = loader.getController();
+                    ControllerHandler.setHelloController(helloController);
                     helloController.setHelloApplication(helloApplication);
                     helloApplication.getStage().setScene(scene);
                     helloApplication.getStage().setTitle("Muebles Fx");

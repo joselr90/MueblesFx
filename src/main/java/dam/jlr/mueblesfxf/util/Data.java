@@ -8,8 +8,16 @@ import java.util.ArrayList;
 
 
 public class Data {
+    public static ArrayList<Model> getModels() {
+        return models;
+    }
+
+    public static void setModels(ArrayList<Model> models) {
+        Data.models = models;
+    }
+
     //arraylist to binary
-    ArrayList<Model> models = new ArrayList<>();
+    static ArrayList<Model> models = new ArrayList<>();
 
     //serialize data
     //serialize to byte

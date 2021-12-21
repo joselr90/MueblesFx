@@ -6,6 +6,10 @@ import dam.jlr.mueblesfxf.model.Model;
 import dam.jlr.mueblesfxf.util.Data;
 import dam.jlr.mueblesfxf.util.HibernateActions;
 import dam.jlr.mueblesfxf.util.HibernateUtil;
+import dam.jlr.mueblesfxf.util.JdbcUtil;
+import dam.jlr.mueblesfxf.view.SceneManager;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -40,11 +44,15 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
-public class HelloController implements Initializable {
+
+
+public class HelloController extends Controller implements Initializable {
     private static Stage stage;
     private HelloApplication helloApplication;
     @FXML
     private Button quitDb;
+    @FXML
+    private ChoiceBox choicebox;
 
     public  void setStage(Stage stage) {
        stage = stage;
@@ -85,14 +93,16 @@ public class HelloController implements Initializable {
     private RadioButton radioButtonAny;
     @FXML
     private ToggleButton toggle;
-
+    private ArrayList<Model> list;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         radiobuttonID.setSelected(true);
         toggle.setFocusTraversable(false);
         initTable();
-        initRadioButtons();
-        initTxtBuscar();
+
+//        initRadioButtons();
+        initTxtBuscar2();
+        initChoiceBox();
         initDoubleClick();
         textPrecio.setTextFormatter(new3DecimalFormatter());
         txtBuscar.setTextFormatter(new TextFormatter<>(c -> (c.getControlNewText().matches("\\d*")) ? c : null));
@@ -100,20 +110,26 @@ public class HelloController implements Initializable {
     }
 @FXML
     private void clickShow(ActionEvent event) {
-        Stage stage = new Stage();
-        Parent root = null;
-        try {
-            root = FXMLLoader.load(
-                    HelloApplication.class.getResource("login.fxml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        stage.setScene(new Scene(root));
-        stage.setTitle("My modal window");
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(
-                ((Node)event.getSource()).getScene().getWindow() );
-        stage.show();
+//        Stage stage = new Stage();
+//        Parent root = null;
+//        try {
+//            root = FXMLLoader.load(
+//                    HelloApplication.class.getResource("login.fxml"));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        stage.setScene(new Scene(root));
+//        stage.setTitle("My modal window");
+//        stage.initModality(Modality.WINDOW_MODAL);
+//        stage.initOwner(
+//                ((Node)event.getSource()).getScene().getWindow() );
+//        stage.show();
+
+    SceneManager.setScene("login.fxml");
+    LoginController loginController = ControllerHandler.getLoginController();
+    loginController.setHelloApplication(helloApplication);
+    JdbcUtil.closeConnection();
+
     }
     @FXML
     public void modify(ActionEvent actionEvent) {
@@ -135,7 +151,47 @@ public class HelloController implements Initializable {
 
         }
     }
+public void initChoiceBox(){
+    choicebox.getItems().addAll("ID","Material","Precio","Tipo","Cualquiera");
+    choicebox.setValue("ID");
 
+    //add listener
+    choicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+        @Override
+        public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+            if (t1.equals("ID")){
+                txtBuscar.setTextFormatter(new TextFormatter<>(c -> (c.getControlNewText().matches("\\d*")) ? c : null));
+                txtBuscar.setPromptText("ID");
+
+            }
+            if (t1.equals("Material")){
+                txtBuscar.setTextFormatter(new TextFormatter<>(c -> (c.getControlNewText().matches("[a-zA-Z0-9]*")) ? c : null));
+                txtBuscar.setPromptText("Material");
+
+            }
+            if (t1.equals("Precio")){
+                txtBuscar.setTextFormatter(new3DecimalFormatter());
+                txtBuscar.setPromptText("Precio");
+
+            }
+            if (t1.equals("Tipo")){
+                txtBuscar.setTextFormatter(new TextFormatter<>(c -> (c.getControlNewText().matches("[a-zA-Z0-9]*")) ? c : null));
+                txtBuscar.setPromptText("Tipo");
+
+            }
+            if (t1.equals("Cualquiera")){
+                txtBuscar.setTextFormatter(new TextFormatter<>(c -> (c.getControlNewText().matches("[a-zA-Z0-9]*")) ? c : null));
+                txtBuscar.setPromptText("Cualquiera");
+
+            }
+            }
+            }
+
+
+
+    );
+
+}
     @FXML
     public void exportData(ActionEvent actionEvent) {
         ObservableList<Model> selectedItems = table.getSelectionModel().getSelectedItems();
@@ -181,6 +237,14 @@ public class HelloController implements Initializable {
 
     }
 
+    public ArrayList<Model> getList() {
+        return list;
+    }
+
+    public void setList(ArrayList<Model> list) {
+        this.list = list;
+    }
+
     @FXML
     public void readDaata(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
@@ -188,18 +252,53 @@ public class HelloController implements Initializable {
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("DATA", "*.data")
         );
-        fileChooser.setInitialFileName("muebles.data");
+        fileChooser.setInitialFileName("");
         fileChooser.setInitialDirectory(new java.io.File("."));
         File file = fileChooser.showOpenDialog(stage);
-        String st=file.getPath()+file.getName();
+        String st = file.getPath() + file.getName();
 
-        System.out.println(st);
+        System.out.println(file);
+        ArrayList<Model> models = null;
         if (file != null) {
-           ArrayList<Model>  models= Data.dataToArraylist(file);
+            models = Data.dataToArraylist(file);
             for (Model model : models) {
                 System.out.println(model.toString());
             }
         }
+        Data.setModels(models);
+        Stage stage = new Stage();
+        Parent root = null;
+
+//        FXMLLoader loader = new FXMLLoader(
+//                HelloApplication.class.getResource("modaldialog.fxml"));
+//
+//        try {
+//            root = loader.load();
+//        } catch (IOException e) {
+////            e.printStackTrace();
+//            System.out.println("MIERDA");
+//        }
+//        this.list = models;
+//        ModalDialogController modalDialogController = loader.getController();
+//        modalDialogController.setHelloController(this);
+//        modalDialogController.setList(models);
+        try {
+            root = FXMLLoader.load(HelloApplication.class.getResource("modaldialog.fxml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //get root cotroller
+//        ModalDialogController modalDialogController = (ModalDialogController)  root.getParent().getScene().getWindow().getUserData();
+//       modalDialogController.setHelloController(this);
+        //get components from root
+
+
+        stage.setScene(new Scene(root));
+        stage.setTitle("My modal window");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(
+                ((Node) actionEvent.getSource()).getScene().getWindow());
+        stage.show();
     }
 
     public void setHelloApplication(HelloApplication helloApplication) {
@@ -255,9 +354,15 @@ public class HelloController implements Initializable {
             }
 
 
-    private static TextFormatter<Double> new3DecimalFormatter() {
+
+
+    static TextFormatter<Double> new3DecimalFormatter() {
         Pattern decimalPattern = Pattern.compile("-?\\d*(\\.\\d{0,2})?");
         return new TextFormatter<>(c -> (decimalPattern.matcher(c.getControlNewText()).matches()) ? c : null);
+    }
+    public void refreshTable() {
+        table.getItems().setAll(HibernateActions.getData());
+
     }
 
     public void initRadioButtons() {
@@ -329,6 +434,51 @@ public class HelloController implements Initializable {
                 }
 
         );
+
+    }
+    public void initTxtBuscar2() {
+        txtBuscar.textProperty().addListener((observable, oldValue, newValue) -> {
+                    System.out.println(newValue);
+                    if (newValue.length() > 0) {
+                        if (choicebox.getValue().equals("ID")) {
+
+                            table.getItems().setAll(HibernateActions.getById(Integer.parseInt(newValue)));
+
+                        } else if (choicebox.getValue().equals("Material")) {
+                            txtBuscar.setTextFormatter(null);
+                            table.getItems().setAll(HibernateActions.getByMaterial(newValue));
+
+                        } else if (choicebox.getValue().equals("Precio")) {
+                            table.getItems().setAll(HibernateActions.getByPrecio(Double.parseDouble(newValue)));
+
+                        } else if (choicebox.getValue().equals("Tipo")) {
+                            txtBuscar.setTextFormatter(null);
+
+                            table.getItems().setAll(HibernateActions.getByTipo(newValue));
+                        } else if (choicebox.getValue().equals("Cualquiera")) {
+                            txtBuscar.setTextFormatter(null);
+                            EntityManager entityMgr = HibernateUtil.getSessionFactory(HibernateActions.getDataBase()).createEntityManager();
+
+
+                            //search by any
+                            String query = "SELECT * FROM muebles WHERE id LIKE '%" + newValue + "%' OR material LIKE '%" + newValue + "%' OR precio LIKE '%" + newValue + "%' OR tipo LIKE '%" + newValue + "%'";
+                            Query q = entityMgr.createNativeQuery(query, Model.class);
+                            List<Model> list = q.getResultList();
+                            table.getItems().setAll(list);
+                        } else {
+                            table.getItems().setAll(HibernateActions.getData());
+
+                        }
+
+                    } else {
+
+                        table.getItems().setAll(HibernateActions.getData());
+                    }
+
+                }
+        );
+        //only numbers in txtPrecio
+
 
     }
 
