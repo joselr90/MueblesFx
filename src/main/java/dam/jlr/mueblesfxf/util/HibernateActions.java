@@ -13,12 +13,22 @@ import java.util.List;
 public class HibernateActions {
    private static EntityManager entityManager;
 
+    public static String getDataBase() {
+        return dataBase;
+    }
+
+    public static void setDataBase(String dataBase) {
+        HibernateActions.dataBase = dataBase;
+    }
+
+    private static String dataBase;
+
     public HibernateActions() {
-      entityManager = HibernateUtil.getSessionFactory().createEntityManager();
+      entityManager = HibernateUtil.getSessionFactory(dataBase).createEntityManager();
     }
 
     public static void save(Model model) {
-        entityManager = HibernateUtil.getSessionFactory().createEntityManager();
+        entityManager = HibernateUtil.getSessionFactory(dataBase).createEntityManager();
         entityManager.getTransaction().begin();
         entityManager.persist(model);
         entityManager.getTransaction().commit();
@@ -26,7 +36,7 @@ public class HibernateActions {
     }
 
 public static List<Model> getData(){
-    Session session = HibernateUtil.getSessionFactory().openSession();
+    Session session = HibernateUtil.getSessionFactory(dataBase).openSession();
     Query query = session.createQuery("from Model");
     List<Model> list = query.getResultList();
     session.close();
@@ -41,7 +51,7 @@ public static List<Model> getData(){
 }
 //get by id
 public static Model getById(int id){
-    entityManager = HibernateUtil.getSessionFactory().createEntityManager();
+    entityManager = HibernateUtil.getSessionFactory(dataBase).createEntityManager();
     entityManager.getTransaction().begin();
     Model mueble=entityManager.find(Model.class, id);
     entityManager.getTransaction().commit();
@@ -50,7 +60,7 @@ public static Model getById(int id){
 }
 //get by material ignore case
 public static ArrayList<Model> getByMaterial(String material){
-    entityManager = HibernateUtil.getSessionFactory().createEntityManager();
+    entityManager = HibernateUtil.getSessionFactory(dataBase).createEntityManager();
     entityManager.getTransaction().begin();
     ArrayList<Model> muebles=(ArrayList<Model>) entityManager.createQuery("SELECT m FROM Model m WHERE m.material LIKE :material").setParameter("material", "%"+material+"%").getResultList();
     entityManager.getTransaction().commit();
@@ -59,7 +69,7 @@ public static ArrayList<Model> getByMaterial(String material){
 }
 //get by tipo ignore case
 public static ArrayList<Model> getByTipo(String tipo){
-    entityManager = HibernateUtil.getSessionFactory().createEntityManager();
+    entityManager = HibernateUtil.getSessionFactory(dataBase).createEntityManager();
     entityManager.getTransaction().begin();
     ArrayList<Model> muebles=(ArrayList<Model>) entityManager.createQuery("SELECT m FROM Model m WHERE m.tipo LIKE :tipo").setParameter("tipo", "%"+tipo+"%").getResultList();
     entityManager.getTransaction().commit();
@@ -68,7 +78,7 @@ public static ArrayList<Model> getByTipo(String tipo){
 }
 //get by precio
 public static ArrayList<Model> getByPrecio(double precio){
-    entityManager = HibernateUtil.getSessionFactory().createEntityManager();
+    entityManager = HibernateUtil.getSessionFactory(dataBase).createEntityManager();
     entityManager.getTransaction().begin();
     ArrayList<Model> muebles=(ArrayList<Model>) entityManager.createQuery("SELECT m FROM Model m WHERE m.precio = :precio").setParameter("precio", precio).getResultList();
     entityManager.getTransaction().commit();
@@ -77,7 +87,7 @@ public static ArrayList<Model> getByPrecio(double precio){
 }
 
     public static void modify(Model model) {
-        entityManager = HibernateUtil.getSessionFactory().createEntityManager();
+        entityManager = HibernateUtil.getSessionFactory(dataBase).createEntityManager();
         entityManager.getTransaction().begin();
         entityManager.merge(model);
         entityManager.getTransaction().commit();
@@ -85,7 +95,7 @@ public static ArrayList<Model> getByPrecio(double precio){
     }
 
     public static void delete(Model model) {
-        entityManager = HibernateUtil.getSessionFactory().createEntityManager();
+        entityManager = HibernateUtil.getSessionFactory(dataBase).createEntityManager();
         entityManager.getTransaction().begin();
 
         entityManager.remove(model);
@@ -102,7 +112,7 @@ public static ArrayList<Model> getByPrecio(double precio){
     public static final String SELECT_BY_ID = "selectById";
 
     public static void insert(Model model) {
-        entityManager = HibernateUtil.getSessionFactory().createEntityManager();
+        entityManager = HibernateUtil.getSessionFactory(dataBase).createEntityManager();
         entityManager.getTransaction().begin();
         entityManager.persist(model);
         entityManager.getTransaction().commit();

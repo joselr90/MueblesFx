@@ -4,14 +4,16 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <AnchorPane prefHeight="476.0" prefWidth="351.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dam.jlr.mueblesfxf.controller.DbController">
    <children>
       <TextField fx:id="textField" layoutX="14.0" layoutY="28.0" promptText="database name" />
       <Button layoutX="176.0" layoutY="28.0" mnemonicParsing="false" onAction="#createdb" text="Create" />
-      <ListView fx:id="listView" layoutX="14.0" layoutY="86.0" prefHeight="269.0" prefWidth="247.0" />
+      <ListView fx:id="listView" layoutX="14.0" layoutY="86.0" onMouseClicked="#ifDoubleClickitem" prefHeight="269.0" prefWidth="247.0" />
       <Button layoutX="279.0" layoutY="86.0" mnemonicParsing="false" onAction="#removeDB" text="Remove" />
       <Button layoutX="279.0" layoutY="140.0" mnemonicParsing="false" onAction="#renameDB" prefHeight="25.0" prefWidth="59.0" text="Rename" />
       <Button layoutX="14.0" layoutY="422.0" mnemonicParsing="false" onAction="#backScene" text="Back" />
+      <FontIcon fx:id="ikonli" layoutX="279.0" layoutY="411.0" />
    </children>
 </AnchorPane>

@@ -27,13 +27,14 @@ public class Data {
         }
         return bos.toByteArray();
     }
-    public static void arraylistToData(ArrayList<Model> a, String name) {
-        String path = ".\\src\\main\\java\\src\\data\\exportdata\\" + name + ".data";
+    public static void arraylistToData(File file,ArrayList<Model> models) {
+//        String path = ".\\src\\main\\resources\\dataexport\\" + name + ".data";
+//        String file = path + name + ".data";
         //  Write to disk with FileOutputStream
         FileOutputStream f_out = null;
         try {
             f_out = new
-                    FileOutputStream(path);
+                    FileOutputStream(file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -48,15 +49,57 @@ public class Data {
 
 // Write object out to disk
         try {
-            obj_out.writeObject(a);
+            obj_out.writeObject(models);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
+    public static ArrayList<Model> dataToArraylist(File file) {
+        // Read from disk using FileInputStream
+//        String path = ".\\src\\main\\resources\\dataexport\\" + "\\" + name + ".data";
+
+//        String basePath =  path;
+
+//        System.out.println(basePath);
+        FileInputStream f_in = null;
+        try {
+            f_in = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+// Read object using ObjectInputStream
+        ObjectInputStream obj_in =
+                null;
+        try {
+            obj_in = new ObjectInputStream(f_in);
+        } catch (IOException e) {
+
+        }
+
+// Read an object
+        Object obj = null;
+        try {
+            obj = obj_in.readObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
 
+        // Cast object to a Vector
+        ArrayList<Model> vec = (ArrayList<Model>) obj;
+
+        // Do something with vector....
+
+        return vec;
     }
+
+
+
+}
         //serialize data
 
 

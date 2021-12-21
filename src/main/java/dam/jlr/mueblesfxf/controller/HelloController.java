@@ -1,8 +1,9 @@
 package dam.jlr.mueblesfxf.controller;
 
 import dam.jlr.mueblesfxf.HelloApplication;
-import dam.jlr.mueblesfxf.components.MyRadioButton;
+
 import dam.jlr.mueblesfxf.model.Model;
+import dam.jlr.mueblesfxf.util.Data;
 import dam.jlr.mueblesfxf.util.HibernateActions;
 import dam.jlr.mueblesfxf.util.HibernateUtil;
 import javafx.collections.FXCollections;
@@ -13,18 +14,27 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.SerializationUtils;
 
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.swing.*;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -32,6 +42,9 @@ import java.util.regex.Pattern;
 
 public class HelloController implements Initializable {
     private static Stage stage;
+    private HelloApplication helloApplication;
+    @FXML
+    private Button quitDb;
 
     public  void setStage(Stage stage) {
        stage = stage;
@@ -85,8 +98,23 @@ public class HelloController implements Initializable {
         txtBuscar.setTextFormatter(new TextFormatter<>(c -> (c.getControlNewText().matches("\\d*")) ? c : null));
 
     }
-
-
+@FXML
+    private void clickShow(ActionEvent event) {
+        Stage stage = new Stage();
+        Parent root = null;
+        try {
+            root = FXMLLoader.load(
+                    HelloApplication.class.getResource("login.fxml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        stage.setScene(new Scene(root));
+        stage.setTitle("My modal window");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(
+                ((Node)event.getSource()).getScene().getWindow() );
+        stage.show();
+    }
     @FXML
     public void modify(ActionEvent actionEvent) {
         if (txtID.getText().length() > 0) {
@@ -107,7 +135,78 @@ public class HelloController implements Initializable {
 
         }
     }
-//create enum
+
+    @FXML
+    public void exportData(ActionEvent actionEvent) {
+        ObservableList<Model> selectedItems = table.getSelectionModel().getSelectedItems();
+        //create a list of selected items
+        //observable list to array list
+        ArrayList<Model> list = new ArrayList<>(selectedItems);
+        //ask path with file chooser
+        //save file
+        //show popup alert
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("DATA", "*.data")
+        );
+//        fileChooser.setInitialFileName("muebles.csv");
+        fileChooser.setInitialDirectory(new java.io.File("."));
+        File file = fileChooser.showSaveDialog(stage);
+        if (file != null) {
+//            Data.arraylistToData(file, list);
+
+            SerializationUtils.serialize(list);
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(file);
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(list);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Exportado");
+        alert.setHeaderText("Exportado");
+        alert.setContentText("¿Seguro que quieres exportar?");
+
+        alert.showAndWait();
+
+
+        //get selected items
+
+
+    }
+
+    @FXML
+    public void readDaata(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Abrir");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("DATA", "*.data")
+        );
+        fileChooser.setInitialFileName("muebles.data");
+        fileChooser.setInitialDirectory(new java.io.File("."));
+        File file = fileChooser.showOpenDialog(stage);
+        String st=file.getPath()+file.getName();
+
+        System.out.println(st);
+        if (file != null) {
+           ArrayList<Model>  models= Data.dataToArraylist(file);
+            for (Model model : models) {
+                System.out.println(model.toString());
+            }
+        }
+    }
+
+    public void setHelloApplication(HelloApplication helloApplication) {
+        this.helloApplication = helloApplication;
+    }
+
+    //create enum
     public enum Material {
         MDF,
         ALUMINIO,
@@ -253,7 +352,7 @@ public class HelloController implements Initializable {
                             table.getItems().setAll(HibernateActions.getByTipo(newValue));
                         } else if (radioButtonAny.isSelected()) {
                             txtBuscar.setTextFormatter(null);
-                            EntityManager entityMgr = HibernateUtil.getSessionFactory().createEntityManager();
+                            EntityManager entityMgr = HibernateUtil.getSessionFactory(HibernateActions.getDataBase()).createEntityManager();
 
 
                             //search by any

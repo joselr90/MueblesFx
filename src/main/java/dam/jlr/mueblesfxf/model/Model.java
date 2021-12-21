@@ -1,6 +1,7 @@
 package dam.jlr.mueblesfxf.model;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 
 @Entity
@@ -9,6 +10,8 @@ import java.io.Serializable;
 
 
 public class Model implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 123123123123L;
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

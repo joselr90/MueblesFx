@@ -7,7 +7,7 @@ import dam.jlr.mueblesfxf.util.CSV;
 import dam.jlr.mueblesfxf.util.HibernateActions;
 import dam.jlr.mueblesfxf.util.HibernateUtil;
 import dam.jlr.mueblesfxf.util.JdbcUtil;
-import dam.jlr.mueblesfxf.view.SceneSwitcher;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -48,13 +48,7 @@ public class HelloApplication extends Application {
         this.session = session;
     }
 
-    public SceneSwitcher getSceneSwitcher() {
-        return sceneSwitcher;
-    }
 
-    public void setSceneSwitcher(SceneSwitcher sceneSwitcher) {
-        this.sceneSwitcher = sceneSwitcher;
-    }
 
     public EntityManager getEntityManager() {
         return entityManager;
@@ -65,7 +59,7 @@ public class HelloApplication extends Application {
     }
 
     private Session session;
-    private SceneSwitcher sceneSwitcher;
+
     EntityManager entityManager;
     @Override
     public void start(Stage stage) throws IOException {
@@ -93,16 +87,16 @@ Model[] models = {model,model2,model3,model4,model5};
         CSV.toCSV(models);
         File file=CSV.toCSVfile("hola",CSV.toCSV(models));
 
-        FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("view.fxml"));
+        FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("login.fxml"));
 
 
         this.scene = new Scene(loader.load());
-//       LoginController loginController =(LoginController)loader.getController();
-//        loginController.setHelloApplication(this);
+       LoginController loginController =(LoginController)loader.getController();
+        loginController.setHelloApplication(this);
 
         this.stage.setTitle("Login");
         this.stage.setScene(scene);
-//        loginController.setHelloController(controller);
+
 
         System.out.println("stage setted");
 
@@ -115,9 +109,9 @@ Model[] models = {model,model2,model3,model4,model5};
 
     public static void main(String[] args) {
 
-       for (Model m: HibernateActions.getData()) {
-           System.out.println(m);
-       }
+//       for (Model m: HibernateActions.getData()) {
+//           System.out.println(m);
+//       }
         launch();
     }
     private static class Imagex extends Image{
@@ -183,7 +177,5 @@ Model[] models = {model,model2,model3,model4,model5};
 
     }
     //change scene
-    public void changeScene(String fxml){
-        sceneSwitcher.changeScene(fxml);
-    }
+
 }

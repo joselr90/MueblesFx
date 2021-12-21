@@ -2,6 +2,8 @@ package dam.jlr.mueblesfxf.controller;
 
 import dam.jlr.mueblesfxf.HelloApplication;
 import dam.jlr.mueblesfxf.model.Model;
+import dam.jlr.mueblesfxf.util.HibernateActions;
+import dam.jlr.mueblesfxf.util.HibernateUtil;
 import dam.jlr.mueblesfxf.util.JdbcUtil;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.StringProperty;
@@ -14,6 +16,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.javafx.Icon;
+import org.kordamp.ikonli.javafx.IkonResolver;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,6 +29,9 @@ import java.util.List;
 
 
 public class DbController implements Initializable {
+
+    @FXML
+    private FontIcon ikonli;
 
     public HelloApplication getHelloApplication() {
         return helloApplication;
@@ -44,9 +54,13 @@ public class DbController implements Initializable {
 //            System.out.println(s);
 //            //string to string property
 //            prueba.add(s);
-//
+
+
+
+
 //        }
-//        //add to listview
+//
+// add to listview
         listView.setItems(prueba);
 
 
@@ -60,8 +74,22 @@ public class DbController implements Initializable {
 
     @FXML
     public void createdb(ActionEvent actionEvent) {
+        String dbname = textField.getText();
+        if(dbname.equals("")){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error");
+            alert.setContentText("No se ha introducido ningun nombre de base de datos");
+            alert.showAndWait();
+        }else{
+            JdbcUtil.createdbifnotexist(dbname);
+            ObservableList<String> prueba = FXCollections.observableArrayList(JdbcUtil.executeMySQLQuery());
+            listView.setItems(prueba);
+
+        }
     }
     public void loadData(){
+        JdbcUtil.getConnection(JdbcUtil.getUsername(),JdbcUtil.getPassword());
         ArrayList<String> dbnames= JdbcUtil.executeMySQLQuery();
         for (String dbname:dbnames) {
             System.out.println(dbname);
@@ -71,11 +99,14 @@ public class DbController implements Initializable {
         listView.getItems().clear();
         ObservableList<String> prueba = FXCollections.observableArrayList(JdbcUtil.executeMySQLQuery());
         listView.setItems(prueba);
+
     }
 
     @FXML
     public void backScene(ActionEvent actionEvent) {
         JdbcUtil.closeConnection();
+        JdbcUtil.setUsername("");
+        JdbcUtil.setPassword("");
         FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("login.fxml"));
         try {
             Scene scene = new Scene(loader.load());
@@ -112,11 +143,55 @@ public class DbController implements Initializable {
         listView.getItems().clear();
         ObservableList<String> prueba = FXCollections.observableArrayList(JdbcUtil.executeMySQLQuery());
         listView.setItems(prueba);
-        loadData();
+
     }
+    public void ifDoubleClickitem() {
+        listView.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getClickCount() == 2) {
+                String selectedItem = listView.getSelectionModel().getSelectedItem();
+                HibernateActions.setDataBase(selectedItem);
+                System.out.println(selectedItem);
+                FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("view.fxml"));
+                try {
+                    Scene scene = new Scene(loader.load());
+                    HelloController helloController = loader.getController();
+                    helloController.setHelloApplication(helloApplication);
+                    helloApplication.getStage().setScene(scene);
+                    helloApplication.getStage().setTitle("Muebles Fx");
+                    helloApplication.getStage().show();
+
+
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+                }
+        );
+
+
+
+
+        }
+
 
     @FXML
     public void removeDB(ActionEvent actionEvent) {
+        //get selected item
+        String selectedItem = listView.getSelectionModel().getSelectedItem();
+        System.out.println(selectedItem);
+        //alert confirmation
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Dialog");
+        alert.setHeaderText("Look, a Confirmation Dialog");
+        alert.setContentText("Are you ok with this?");
+        alert.showAndWait();
+        JdbcUtil.removeDB(selectedItem);
+        //update listview
+        listView.getItems().clear();
+        ObservableList<String> prueba = FXCollections.observableArrayList(JdbcUtil.executeMySQLQuery());
+        listView.setItems(prueba);
+
     }
     public void loadData2(){
         ArrayList<String> dbnames= JdbcUtil.executeMySQLQuery();
@@ -124,4 +199,7 @@ public class DbController implements Initializable {
             System.out.println(dbname);
 }
     }
+
+
+
 }

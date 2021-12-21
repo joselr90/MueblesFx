@@ -2,16 +2,16 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2021-12-20T19:37:51.777506200Z</date>
-  <millis>1640029071777</millis>
-  <nanos>506200</nanos>
-  <sequence>10</sequence>
+  <date>2021-12-21T01:33:55.078567700Z</date>
+  <millis>1640050435078</millis>
+  <nanos>567700</nanos>
+  <sequence>0</sequence>
   <logger></logger>
   <level>INFO</level>
   <class>dam.jlr.mueblesfxf.util.CSV</class>
   <method>toCSVfile</method>
   <thread>18</thread>
-  <message>perrooooooo,pollas,100.0,
+  <message>Mueble,Madera,100.0,
 Mueble,Silla,200.0,
 Mueble,Mesa,300.0,
 Mueble,Silla,400.0,
